@@ -14,7 +14,7 @@ export class ActionMenu {
 
   constructor(clientApplication: ClientApplication) {
     this._menuStatePool = new ActionMenuScreenPool(clientApplication);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   /** Avoid a circular dependency by not constructing the BaseActionMenuScreen class here

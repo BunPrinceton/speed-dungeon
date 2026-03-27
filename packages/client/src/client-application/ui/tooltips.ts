@@ -1,22 +1,30 @@
-import { Point } from "@speed-dungeon/common";
+import { CombatantConditionName, Point } from "@speed-dungeon/common";
 import { makeAutoObservable } from "mobx";
-import { ReactNode } from "react";
+
+export type TooltipContent =
+  | { type: "text"; text: string }
+  | {
+      type: "condition";
+      conditionName: CombatantConditionName;
+      description: string;
+      debugText?: string;
+    };
 
 export class TooltipStore {
   private position: null | Point = null;
-  private text: null | ReactNode = null;
+  private content: null | TooltipContent = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   get() {
-    return { text: this.text, position: this.position };
+    return { content: this.content, position: this.position };
   }
 
-  private set(content: ReactNode, position: Point) {
+  private set(content: TooltipContent, position: Point) {
     this.position = position;
-    this.text = content;
+    this.content = content;
   }
 
   private moveTo(position: Point) {
@@ -25,10 +33,14 @@ export class TooltipStore {
 
   private clear() {
     this.position = null;
-    this.text = null;
+    this.content = null;
   }
 
-  showTooltip(elementOption: null | HTMLDivElement, content: ReactNode, offsetTop: number = 4) {
+  showTooltip(
+    elementOption: null | HTMLDivElement,
+    content: TooltipContent,
+    offsetTop: number = 4
+  ) {
     if (!elementOption) return;
     const { x, y, width, height } = elementOption.getBoundingClientRect();
     let tooltipX = x + width / 2.0;
@@ -42,7 +54,6 @@ export class TooltipStore {
       if (!tooltipElement) return console.info("no tooltip found");
 
       const tooltipRect = tooltipElement.getBoundingClientRect();
-      // const viewportWidth = window.innerWidth;
 
       if (y - tooltipRect.height - offsetTop < 0) {
         tooltipY = Math.max(tooltipY, y + height + offsetTop + tooltipRect.height);

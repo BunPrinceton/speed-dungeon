@@ -77,6 +77,9 @@ export enum ClientIntentType {
   // misc utility
   PostItemLink,
   RenamePet,
+
+  // connection
+  Ping,
 }
 
 // Map enum values to payload types
@@ -170,6 +173,7 @@ export interface ClientIntentMap {
     bookType: BookConsumableType;
   };
   [ClientIntentType.RenamePet]: { petId: CombatantId; newName: EntityName };
+  [ClientIntentType.Ping]: { timestamp: number };
 }
 
 export type ClientIntent = {

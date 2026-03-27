@@ -18,6 +18,8 @@ export enum CosmeticEffectNames {
   SmokeParticleStream,
   SmokePuff,
   HeartParticles,
+  SpellcastingGlyph,
+  SpellcastingAura,
 }
 
 export abstract class CosmeticEffect {

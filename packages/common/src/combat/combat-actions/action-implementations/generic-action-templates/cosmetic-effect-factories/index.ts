@@ -41,4 +41,25 @@ export class CosmeticEffectInstructionFactory {
     };
     return effect;
   }
+
+  static createEffectOnCasterRoot(
+    name: CosmeticEffectNames,
+    context: ActionResolutionStepContext,
+    lifetime?: Milliseconds,
+    rankOption?: number
+  ) {
+    const effect: CosmeticEffectOnTargetTransformNode = {
+      name,
+      lifetime,
+      rankOption,
+      parent: {
+        sceneEntityIdentifier: {
+          type: SceneEntityType.CharacterModel,
+          entityId: context.actionUserContext.actionUser.getEntityId(),
+        },
+        transformNodeName: CombatantBaseChildTransformNodeName.EntityRoot,
+      },
+    };
+    return effect;
+  }
 }

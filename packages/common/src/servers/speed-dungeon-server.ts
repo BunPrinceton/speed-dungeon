@@ -37,7 +37,7 @@ class GlobalIntentExecutor {
 export abstract class SpeedDungeonServer {
   protected readonly outgoingMessagesGateway = new OutgoingMessageGateway<GameStateUpdate>();
   readonly userSessionRegistry = new UserSessionRegistry();
-  protected readonly updateDispatchFactory = new MessageDispatchFactory<GameStateUpdate>(
+  readonly updateDispatchFactory = new MessageDispatchFactory<GameStateUpdate>(
     this.userSessionRegistry
   );
 

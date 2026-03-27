@@ -13,7 +13,7 @@ export class ClientApplicationLobbyContext {
   readonly channel = new ClientApplicationLobbyChannel();
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   setGameList(newList: GameListEntry[]) {
@@ -27,6 +27,10 @@ export class ClientApplicationLobbyContext {
 
 class ClientApplicationLobbyChannel {
   private usersInChannel = new Map<Username, UserChannelDisplayData>();
+
+  constructor() {
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
 
   update(users: Map<Username, UserChannelDisplayData>) {
     this.usersInChannel.clear();

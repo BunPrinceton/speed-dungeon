@@ -7,9 +7,10 @@ export enum ConnectionStatus {
 }
 export class ConnectionStatusStore {
   private _connectionStatus: ConnectionStatus = ConnectionStatus.Initializing;
+  private _pingMs: number | null = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   set connectionStatus(newStatus: ConnectionStatus) {
@@ -22,5 +23,13 @@ export class ConnectionStatusStore {
 
   get isConnected() {
     return this.connectionStatus === ConnectionStatus.Connected;
+  }
+
+  get pingMs() {
+    return this._pingMs;
+  }
+
+  set pingMs(value: number | null) {
+    this._pingMs = value;
   }
 }

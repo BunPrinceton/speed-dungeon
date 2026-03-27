@@ -107,10 +107,25 @@ export function createClientSequentialEventHandlers(
 
           const levelups = Battle.handleVictory(game, party, event.experiencePointChanges, loot);
 
+          const leveledUpCharacterIds = new Set(Object.keys(levelups));
+
           for (const [characterId, expChange] of Object.entries(experiencePointChanges)) {
             const characterResult = game.getCombatantById(characterId);
             if (characterResult instanceof Error) return console.error(characterResult);
             eventLogMessageService.postExperienceGained(characterResult.getName(), expChange);
+
+            // Show floating text: "Level Up!" takes priority over "+X XP"
+            if (leveledUpCharacterIds.has(characterId)) {
+              clientApplication.floatingMessagesService.startLevelUpMessage(
+                characterId,
+                levelups[characterId]!
+              );
+            } else {
+              clientApplication.floatingMessagesService.startExperienceGainedMessage(
+                characterId,
+                expChange
+              );
+            }
           }
           for (const [characterId, levelup] of Object.entries(levelups)) {
             const characterResult = game.getCombatantById(characterId);

@@ -32,7 +32,7 @@ export class ConsideringCombatantAbilityActionMenuScreen extends ActionMenuScree
   ) {
     super(clientApplication, ActionMenuScreenType.ConsideringAbilityTreeAbility);
     this.minPageCount = column.length;
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

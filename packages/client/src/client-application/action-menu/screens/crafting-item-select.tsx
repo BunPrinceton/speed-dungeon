@@ -11,7 +11,7 @@ import { CraftingItemActionMenuScreen } from "./crafting-item";
 export class CraftingItemSelectionActionMenuScreen extends ActionMenuScreen {
   constructor(clientApplication: ClientApplication) {
     super(clientApplication, ActionMenuScreenType.CraftingItemSelection);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

@@ -22,7 +22,7 @@ export class HighlightManager {
     private clientApplication: ClientApplication,
     private sceneEntity: CombatantSceneEntity
   ) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   private materialHiglightable(material: any): material is StandardMaterial | PBRMaterial {

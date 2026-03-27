@@ -23,7 +23,7 @@ export class ClientSequentialEventProcessor implements ReactiveNode {
   }
 
   makeObservable() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   get isProcessing() {

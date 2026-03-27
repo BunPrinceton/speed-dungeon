@@ -27,7 +27,7 @@ RUN yarn install --pure-lockfile --non-interactive
 # build app
 FROM node:latest as builder
 WORKDIR /
-RUN npm install -g typescript -y
+RUN npm install -g typescript@5.4.5 -y
 
 WORKDIR /app
 COPY --from=buildDeps /app/package.json ./package.json
@@ -41,7 +41,7 @@ COPY packages/server/tsconfig.json ./packages/server/
 COPY tsconfig.json .
 
 WORKDIR /app/packages/common
-RUN rm tsconfig.tsbuildinfo
+RUN rm -f tsconfig.tsbuildinfo
 RUN rm -rf ./dist
 RUN tsc -p tsconfig.build.json && echo compiled common directory
 
@@ -61,5 +61,5 @@ COPY --from=deployDeps /app/packages/common/package.json ./packages/common
 COPY --from=deployDeps /app/node_modules ./node_modules
 # COPY --from=deployDeps /app/packages/server/node_modules ./packages/server/node_modules
 WORKDIR /app/packages/server
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/main.js"]
 

@@ -12,7 +12,7 @@ import { ClientApplicationSession } from "./client-application-session";
 export class ClientApplicationGameContext {
   private game: null | SpeedDungeonGame = null;
   constructor(private clientSession: ClientApplicationSession) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   setGame(game: SpeedDungeonGame) {

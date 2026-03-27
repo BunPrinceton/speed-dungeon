@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: speed-dungeon-postgres
+    environment:
+      POSTGRES_USER: speeddungeon
+      POSTGRES_PASSWORD: speeddungeon
+      POSTGRES_DB: speeddungeon
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U speeddungeon"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  valkey:
+    image: valkey/valkey
+    container_name: speed-dungeon-valkey
+    ports:
+      - "6380:6379"
+    volumes:
+      - valkey_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  server:
+    build:
+      context: .
+      dockerfile: dockerfiles/server.Dockerfile
+    container_name: speed-dungeon-server
+    ports:
+      - "8080:8080"
+      - "8090:8090"
+    environment:
+      NODE_ENV: development
+      FRONT_END_URL: http://localhost:3000
+      AUTH_SERVER_URL: http://localhost:8081
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: speeddungeon
+      POSTGRES_USER: speeddungeon
+      POSTGRES_PASSWORD: speeddungeon
+      DATABASE_URL: postgres://speeddungeon:speeddungeon@postgres:5432/speeddungeon
+      VALKEY_URL: redis://valkey:6379
+      INTERNAL_SERVICES_SECRET: dev-secret-key-change-in-production
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  valkey_data:

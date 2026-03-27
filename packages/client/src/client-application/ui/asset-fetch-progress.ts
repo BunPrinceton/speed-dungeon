@@ -17,7 +17,7 @@ export class AssetFetchProgressStore {
   >();
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   get displayPercent() {

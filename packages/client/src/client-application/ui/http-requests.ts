@@ -3,7 +3,7 @@ import { makeAutoObservable } from "mobx";
 
 export class HttpRequestTracker {
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
   data: null | string | { [key: string]: any } = null;
   loading: boolean = true;
@@ -28,7 +28,7 @@ export class HttpRequestTracker {
 will send responses that conform to our own custom error responses */
 export class HttpRequestStore {
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
   requests: { [url: string]: HttpRequestTracker } = {};
 

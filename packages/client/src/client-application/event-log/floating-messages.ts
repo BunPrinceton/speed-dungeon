@@ -6,6 +6,8 @@ export enum FloatingMessageTextColor {
   ManaGained,
   MagicalDamage,
   Parried,
+  ExperienceGained,
+  LevelUp,
 }
 
 export enum FloatingMessageElementType {
@@ -59,4 +61,6 @@ export const FLOATING_TEXT_COLORS: Record<FloatingMessageTextColor, string> = {
   [FloatingMessageTextColor.ManaGained]: "text-blue-600",
   [FloatingMessageTextColor.MagicalDamage]: "text-sky-300",
   [FloatingMessageTextColor.Parried]: "text-zinc-300",
+  [FloatingMessageTextColor.ExperienceGained]: "text-yellow-400",
+  [FloatingMessageTextColor.LevelUp]: "text-yellow-300",
 };

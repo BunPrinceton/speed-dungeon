@@ -158,6 +158,32 @@ export class FloatingMessageService {
     this.dispatch(entityId, elements);
   }
 
+  startExperienceGainedMessage(entityId: EntityId, amount: number) {
+    const colorClass = FLOATING_TEXT_COLORS[FloatingMessageTextColor.ExperienceGained];
+    const elements: FloatingMessageElement[] = [
+      {
+        type: FloatingMessageElementType.Text,
+        text: `+${amount} XP`,
+        classNames: { mainText: colorClass, shadowText: "" },
+      },
+    ];
+
+    this.dispatch(entityId, elements);
+  }
+
+  startLevelUpMessage(entityId: EntityId, newLevel: number) {
+    const colorClass = FLOATING_TEXT_COLORS[FloatingMessageTextColor.LevelUp];
+    const elements: FloatingMessageElement[] = [
+      {
+        type: FloatingMessageElementType.Text,
+        text: `Level Up! ${newLevel}`,
+        classNames: { mainText: colorClass + " scale-[1.25]", shadowText: "" },
+      },
+    ];
+
+    this.dispatch(entityId, elements);
+  }
+
   startMissingAnimationMessage(entityId: EntityId, animationName: SkeletalAnimationName) {
     const elements: FloatingMessageElement[] = [
       {

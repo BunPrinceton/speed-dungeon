@@ -1,5 +1,5 @@
 import { ClientIntentMap, ClientIntentType } from "../../packets/client-intents.js";
-import { GameStateUpdate } from "../../packets/game-state-updates.js";
+import { GameStateUpdate, GameStateUpdateType } from "../../packets/game-state-updates.js";
 import { MessageDispatchOutbox } from "../update-delivery/outbox.js";
 import { GameServer } from "./index.js";
 import { UserSession } from "../sessions/user-session.js";
@@ -73,5 +73,15 @@ export function createGameServerClientIntentHandlers(
       gameServer.miscUtilityController.postItemLinkHandler(user, data),
     [ClientIntentType.RenamePet]: (data, user) =>
       gameServer.miscUtilityController.renamePetHandler(user, data),
+
+    // CONNECTION
+    [ClientIntentType.Ping]: (data, user) => {
+      const outbox = new MessageDispatchOutbox<GameStateUpdate>(gameServer.updateDispatchFactory);
+      outbox.pushToConnection(user.connectionId, {
+        type: GameStateUpdateType.Pong,
+        data: { timestamp: data.timestamp },
+      });
+      return outbox;
+    },
   };
 }

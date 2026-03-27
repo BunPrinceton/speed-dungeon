@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "standalone",
   // reactStrictMode: false,
   experimental: {},
   typescript: {
@@ -8,6 +9,9 @@ const nextConfig = {
     // your project has type errors.
     // !! WARN !!
     // ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
   devIndicators: false, // turn off the next logo
   // transpilePackages: ["common"], // attemptingtospeedbuildtimes

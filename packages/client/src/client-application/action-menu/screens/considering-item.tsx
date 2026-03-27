@@ -20,7 +20,7 @@ export class ConsideringItemActionMenuScreen extends ActionMenuScreen {
   ) {
     super(clientApplication, ActionMenuScreenType.ItemSelected);
 
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   private shouldShowEquipAltSlotButton() {

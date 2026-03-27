@@ -19,7 +19,7 @@ export class ConfirmConvertToShardsActionMenuScreen extends ActionMenuScreen {
     public type: ActionMenuScreenType.ItemSelected | ActionMenuScreenType.ConfimConvertToShards
   ) {
     super(clientApplication, type);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection(): ReactNode {

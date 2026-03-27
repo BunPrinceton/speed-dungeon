@@ -66,7 +66,7 @@ export class CombatantTurnTracker extends TurnTracker {
     return { type: TurnTrackerEntityType.Combatant, combatantId: this.combatantId };
   }
 
-  getMatchingScheduler(schedulers: ITurnScheduler[]) {
+  getMatchingScheduler(schedulers: ITurnScheduler[]): ITurnScheduler | undefined {
     return schedulers.find(
       (item) => item instanceof CombatantTurnScheduler && item.combatantId === this.combatantId
     );
@@ -119,7 +119,7 @@ export class ConditionTurnTracker extends TurnTracker {
     return this.timeOfNextMove + this.conditionId;
   }
 
-  getMatchingScheduler(schedulers: ITurnScheduler[]) {
+  getMatchingScheduler(schedulers: ITurnScheduler[]): ITurnScheduler | undefined {
     return schedulers.find(
       (item) => item instanceof ConditionTurnScheduler && item.conditionId === this.conditionId
     );
@@ -172,7 +172,7 @@ export class ActionEntityTurnTracker extends TurnTracker {
     return this.timeOfNextMove + this.actionEntityId;
   }
 
-  getMatchingScheduler(schedulers: ITurnScheduler[]) {
+  getMatchingScheduler(schedulers: ITurnScheduler[]): ITurnScheduler | undefined {
     return schedulers.find(
       (item) =>
         item instanceof ActionEntityTurnScheduler && item.actionEntityId === this.actionEntityId

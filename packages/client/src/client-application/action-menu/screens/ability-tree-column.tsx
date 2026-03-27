@@ -21,7 +21,7 @@ export class ConsideringAbilityTreeColumnActionMenuScreen extends ActionMenuScre
     super(clientApplication, ActionMenuScreenType.ConsideringAbilityTreeColumn);
     this.minPageCount = ABILITY_TREE_DIMENSIONS.x;
     this.pageIndexInternal = columnIndex;
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

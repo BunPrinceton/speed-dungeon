@@ -14,7 +14,7 @@ import { HotkeyButtonTypes } from "@/client-application/ui/keybind-config";
 export class AssigningAttributePointsActionMenuScreen extends ActionMenuScreen {
   constructor(clientApplication: ClientApplication) {
     super(clientApplication, ActionMenuScreenType.AssignAttributePoints);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

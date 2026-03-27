@@ -16,11 +16,15 @@ import { GameWorldView } from "..";
 import { SceneEntityLoadingStateTracker } from "./loading-state-tracker";
 import { CHARACTER_SLOT_SPACING } from "@/client-consts";
 import { SceneEntityManager } from "./base";
+import debounce from "lodash.debounce";
+
+const PORTRAIT_DEBOUNCE_MS = 600;
 
 export class CombatantSceneEntityManager extends SceneEntityManager<CombatantSceneEntity> {
   sceneEntities = new Map<EntityId, CombatantSceneEntity>();
   factory: CombatantSceneEntityFactory;
   readonly loadingStates = new SceneEntityLoadingStateTracker();
+  private portraitDebouncers = new Map<EntityId, ReturnType<typeof debounce>>();
 
   constructor(
     private clientApplication: ClientApplication,
@@ -31,12 +35,14 @@ export class CombatantSceneEntityManager extends SceneEntityManager<CombatantSce
   }
 
   updateEntities(deltaTime: number) {
+    const deltaSeconds = deltaTime / 1000;
     for (const [_, combatantModel] of this.sceneEntities) {
       combatantModel.highlightManager.updateHighlight();
 
       combatantModel.movementManager.processActiveActions(deltaTime);
       combatantModel.skeletalAnimationManager.stepAnimationTransitionWeights();
       combatantModel.skeletalAnimationManager.handleCompletedAnimations();
+      combatantModel.spineAimingManager.update(deltaSeconds);
       combatantModel.updateDomRefPosition();
       combatantModel.targetingIndicatorManager.updateBillboardPositions();
     }
@@ -56,12 +62,12 @@ export class CombatantSceneEntityManager extends SceneEntityManager<CombatantSce
 
     const { entityId } = sceneEntity;
     try {
-      // const portraitOption =
-      //   await this.gameWorldView.imageGenerator.createCombatantPortrait(entityId);
+      const portraitOption =
+        await this.gameWorldView.imageGenerator.createCombatantPortrait(entityId);
 
-      // if (portraitOption) {
-      //   this.clientApplication.imageStore.setCombatantPortrait(entityId, portraitOption);
-      // }
+      if (portraitOption) {
+        this.clientApplication.imageStore.setCombatantPortrait(entityId, portraitOption);
+      }
 
       this.loadingStates.setEntityIsLoaded(entityId);
     } catch (error) {
@@ -81,6 +87,11 @@ export class CombatantSceneEntityManager extends SceneEntityManager<CombatantSce
 
       model.cleanup({ softCleanup: !!options.softCleanup });
       this.sceneEntities.delete(entityId);
+      const debouncedFn = this.portraitDebouncers.get(entityId);
+      if (debouncedFn) {
+        debouncedFn.cancel();
+        this.portraitDebouncers.delete(entityId);
+      }
       this.loadingStates.clearEntityLoadingState(entityId);
     }
   }
@@ -210,5 +221,26 @@ export class CombatantSceneEntityManager extends SceneEntityManager<CombatantSce
     if (sceneEntity.animationControls.isIdling()) {
       sceneEntity.animationControls.startIdleAnimation(500);
     }
+
+    this.schedulePortraitUpdate(combatantId);
+  }
+
+  private schedulePortraitUpdate(entityId: EntityId) {
+    let debouncedFn = this.portraitDebouncers.get(entityId);
+    if (!debouncedFn) {
+      debouncedFn = debounce(async (id: EntityId) => {
+        try {
+          const portraitOption =
+            await this.gameWorldView.imageGenerator.createCombatantPortrait(id);
+          if (portraitOption) {
+            this.clientApplication.imageStore.setCombatantPortrait(id, portraitOption);
+          }
+        } catch (error) {
+          console.info("error updating portrait after equipment change:", error);
+        }
+      }, PORTRAIT_DEBOUNCE_MS);
+      this.portraitDebouncers.set(entityId, debouncedFn);
+    }
+    debouncedFn(entityId);
   }
 }

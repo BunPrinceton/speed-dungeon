@@ -1,10 +1,20 @@
-import { GameMessageType } from "@speed-dungeon/common";
-import { ReactNode } from "react";
+import { CraftingAction, Equipment, GameMessageType, Item } from "@speed-dungeon/common";
+
+export type GameLogMessageContent =
+  | { type: "text"; text: string }
+  | { type: "itemLink"; posterName: string; item: Item }
+  | {
+      type: "craftResult";
+      crafterName: string;
+      craftingAction: CraftingAction;
+      itemBefore: Equipment;
+      itemAfter: Equipment | null;
+    };
 
 export class GameLogMessage {
   timestamp: number = new Date().getTime();
   constructor(
-    public message: ReactNode,
+    public content: GameLogMessageContent,
     public style: GameLogMessageStyle
   ) {}
 }

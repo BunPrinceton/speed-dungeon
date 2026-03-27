@@ -129,6 +129,8 @@ export interface CombatantMotionUpdate extends IEntityMotionUpdate {
   idleOnComplete?: boolean;
   setParent?: SceneEntityChildTransformNodeIdentifierWithDuration | null;
   equipmentAnimations?: EquipmentAnimation[];
+  /** Target combatant ID for spine aiming during attack animations */
+  aimAtTargetEntityId?: EntityId;
 }
 
 export type EntityMotionUpdate = CombatantMotionUpdate | ActionEntityMotionUpdate;

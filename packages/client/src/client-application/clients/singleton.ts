@@ -5,7 +5,7 @@ export class ClientSingleton<T extends BaseClient> {
   private _client: null | T = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   get() {

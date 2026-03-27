@@ -10,7 +10,7 @@ import { ActionMenuNumberedButton } from "@/app/game/ActionMenu/menu-state/commo
 export class OperatingVendingMachineActionMenuScreen extends ActionMenuScreen {
   constructor(clientApplication: ClientApplication) {
     super(clientApplication, ActionMenuScreenType.OperatingVendingMachine);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

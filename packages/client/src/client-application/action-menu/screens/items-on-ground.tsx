@@ -11,7 +11,7 @@ import { HotkeyButtonTypes } from "@/client-application/ui/keybind-config";
 export class ItemsOnGroundActionMenuScreen extends ActionMenuScreen {
   constructor(clientApplication: ClientApplication) {
     super(clientApplication, ActionMenuScreenType.ItemsOnGround);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

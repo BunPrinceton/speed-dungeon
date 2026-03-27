@@ -20,7 +20,7 @@ export class AlertsService {
   readonly alerts: Alert[] = [];
   private lastAlertId = 0;
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   setAlert(message: Error | string, isSuccess?: boolean) {

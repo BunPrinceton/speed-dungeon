@@ -30,7 +30,7 @@ export class CombatantFocus {
     this.gameContext = clientApplication.gameContext;
     this.actionMenu = clientApplication.actionMenu;
     this.detailableEntityFocus = clientApplication.detailableEntityFocus;
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   get focusedCharacterIdOption() {

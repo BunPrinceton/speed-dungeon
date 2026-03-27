@@ -5,7 +5,7 @@ export class UiConfig {
   private threatTableDisplayMode: UiDisplayMode = UiDisplayMode.Simple;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   cycleThreatTableDisplayMode() {

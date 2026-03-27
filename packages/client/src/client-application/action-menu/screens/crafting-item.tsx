@@ -14,7 +14,7 @@ export class CraftingItemActionMenuScreen extends ActionMenuScreen {
     public item: Equipment
   ) {
     super(clientApplication, ActionMenuScreenType.CraftingActionSelection);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

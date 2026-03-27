@@ -8,7 +8,7 @@ export class Detailable<T> {
   private detailed: null | T = null;
 
   constructor(private onClearDetailed: () => void) {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   setHovered(toSet: T) {

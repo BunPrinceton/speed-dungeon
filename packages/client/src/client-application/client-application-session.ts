@@ -5,7 +5,7 @@ export class ClientApplicationSession {
   private username: null | Username = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   setUsername(username: Username) {

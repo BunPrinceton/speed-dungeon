@@ -19,7 +19,7 @@ export class SelectItemToTradeForBookActionMenuScreen extends ActionMenuScreen {
     public bookType: BookConsumableType
   ) {
     super(clientApplication, ActionMenuScreenType.SelectItemToTradeForBook);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

@@ -24,7 +24,7 @@ export class DialogStore {
   public highlightAuthForm: boolean = false;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   setIsOpen(elementName: DialogElementName, openState: boolean) {

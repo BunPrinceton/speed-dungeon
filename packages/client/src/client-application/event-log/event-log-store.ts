@@ -5,7 +5,7 @@ export class EventLogStore {
   private messages: GameLogMessage[] = [];
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   clear() {

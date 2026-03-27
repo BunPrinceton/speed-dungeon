@@ -1,5 +1,6 @@
 import {
   ClientIntent,
+  ClientIntentType,
   ClientSequentialEventType,
   ConnectionEndpoint,
   GameStateUpdate,
@@ -8,7 +9,11 @@ import { ClientApplication } from "..";
 import { ConnectionMode, ConnectionTopology } from "../connection-topology";
 import { ConnectionStatus } from "../ui/connection-status";
 
+const PING_INTERVAL_MS = 5000;
+
 export abstract class BaseClient {
+  private pingIntervalId: ReturnType<typeof setInterval> | null = null;
+
   constructor(
     protected name: string,
     protected connectionEndpoint: ConnectionEndpoint,
@@ -28,14 +33,34 @@ export abstract class BaseClient {
   }
 
   close() {
+    this.stopPingInterval();
     this.connectionEndpoint.close();
   }
 
   setEndpoint(connectionEndpoint: ConnectionEndpoint) {
     const oldEndpoint = this.connectionEndpoint;
+    this.stopPingInterval();
     this.connectionEndpoint = connectionEndpoint;
     this.registerListeners();
     oldEndpoint.close();
+  }
+
+  private startPingInterval() {
+    this.stopPingInterval();
+    this.pingIntervalId = setInterval(() => {
+      this.dispatchIntent({
+        type: ClientIntentType.Ping,
+        data: { timestamp: Date.now() },
+      });
+    }, PING_INTERVAL_MS);
+  }
+
+  private stopPingInterval() {
+    if (this.pingIntervalId !== null) {
+      clearInterval(this.pingIntervalId);
+      this.pingIntervalId = null;
+    }
+    this.clientApplication.uiStore.connectionStatus.pingMs = null;
   }
 
   protected registerListeners() {
@@ -46,15 +71,8 @@ export abstract class BaseClient {
       this.connectionTopology.runtimeMode = this._targetConnectionMode;
       uiStore.connectionStatus.connectionStatus = ConnectionStatus.Connected;
 
-      // this.clientApplication.sequentialEventProcessor.cancelQueued();
-      // this.clientApplication.sequentialEventProcessor.scheduleEvent({
-      //   type: ClientSequentialEventType.ClearAllModels,
-      //   data: undefined,
-      // });
       this.clientApplication.replayTreeScheduler.clear();
-
-      // this.dispatchIntent({ type: ClientIntentType.RequestsGameList, data: undefined });
-      // this.dispatchIntent({ type: ClientIntentType.GetSavedCharactersList, data: undefined });
+      this.startPingInterval();
     });
 
     this.connectionEndpoint.on("message", (untyped) => {
@@ -64,6 +82,7 @@ export abstract class BaseClient {
 
     this.connectionEndpoint.on("close", (reason) => {
       console.info(`closed connection endpoint with code ${reason}`);
+      this.stopPingInterval();
     });
   }
 

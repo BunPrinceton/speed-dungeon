@@ -69,7 +69,7 @@ export class KeybindConfig {
   private hotkeys = cloneDeep(DEFAULT_KEYBINDS);
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
     this.loadUserPreferences();
   }
 

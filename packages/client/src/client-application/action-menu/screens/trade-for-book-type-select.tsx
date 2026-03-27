@@ -24,7 +24,7 @@ function isBookConsumable(c: Consumable): c is Consumable & { consumableType: Bo
 export class SelectBookToTradeForActionMenuScreen extends ActionMenuScreen {
   constructor(clientApplication: ClientApplication) {
     super(clientApplication, ActionMenuScreenType.SelectingBookType);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

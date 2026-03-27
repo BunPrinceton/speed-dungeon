@@ -1,6 +1,7 @@
 import {
   ActionEntityMotionUpdate,
   AnimationTimingType,
+  CombatantBaseChildTransformNodeName,
   CombatantMotionUpdate,
   DynamicAnimationName,
   EntityAnimation,
@@ -264,8 +265,31 @@ export class EntityMotionGameUpdateHandlerCommand {
     // tells them to "return home"
     if (combatant.combatantProperties.isDead()) return;
 
+    // Spine aiming: start aiming at target during attack animations, stop on recovery/idle
+    if (motionUpdate.aimAtTargetEntityId && motionUpdate.animationOption) {
+      const animName = motionUpdate.animationOption.name.name as SkeletalAnimationName;
+      const isAttackAnimation = isAttackPhaseAnimation(animName);
+      const isRecoveryAnimation = isRecoveryPhaseAnimation(animName);
+
+      if (isAttackAnimation) {
+        const targetModel = combatantSceneEntityManager.getOptional(
+          motionUpdate.aimAtTargetEntityId
+        );
+        const targetHitbox =
+          targetModel?.childTransformNodes[CombatantBaseChildTransformNodeName.HitboxCenter];
+        if (targetHitbox) {
+          combatantModelOption.spineAimingManager.startAiming(targetHitbox);
+        }
+      } else if (isRecoveryAnimation || motionUpdate.idleOnComplete) {
+        combatantModelOption.spineAimingManager.stopAiming();
+      }
+    } else if (motionUpdate.idleOnComplete) {
+      combatantModelOption.spineAimingManager.stopAiming();
+    }
+
     const onMotionComplete = () => {
       if (!motionUpdate.idleOnComplete) return;
+      combatantModelOption.spineAimingManager.stopAiming();
       combatantModelOption.animationControls.startIdleAnimation(500);
     };
     const onTranslationComplete = onMotionComplete;
@@ -304,4 +328,54 @@ export class EntityMotionGameUpdateHandlerCommand {
     const { actionEntityManager } = gameWorldView.sceneEntityService;
     actionEntityManager.unregister(entityId, cleanupMode);
   }
+}
+
+/** Animation names that correspond to the attack wind-up and delivery phases */
+const ATTACK_PHASE_ANIMATIONS = new Set<SkeletalAnimationName>([
+  SkeletalAnimationName.BowPrep,
+  SkeletalAnimationName.BowChambering,
+  SkeletalAnimationName.BowDelivery,
+  SkeletalAnimationName.MainHandSwingChambering,
+  SkeletalAnimationName.MainHandSwingDelivery,
+  SkeletalAnimationName.OffHandSwingChambering,
+  SkeletalAnimationName.OffHandSwingDelivery,
+  SkeletalAnimationName.TwoHandSwingChambering,
+  SkeletalAnimationName.TwoHandSwingDelivery,
+  SkeletalAnimationName.MainHandStabChambering,
+  SkeletalAnimationName.MainHandStabDelivery,
+  SkeletalAnimationName.OffHandStabChambering,
+  SkeletalAnimationName.OffHandStabDelivery,
+  SkeletalAnimationName.TwoHandStabChambering,
+  SkeletalAnimationName.TwoHandStabDelivery,
+  SkeletalAnimationName.MainHandUnarmedChambering,
+  SkeletalAnimationName.MainHandUnarmedDelivery,
+  SkeletalAnimationName.OffHandUnarmedChambering,
+  SkeletalAnimationName.OffHandUnarmedDelivery,
+  SkeletalAnimationName.CastSpellChambering,
+  SkeletalAnimationName.CastSpellDelivery,
+  SkeletalAnimationName.ThrowObjectChambering,
+  SkeletalAnimationName.ThrowObjectDelivery,
+]);
+
+/** Animation names that correspond to recovery after an attack */
+const RECOVERY_PHASE_ANIMATIONS = new Set<SkeletalAnimationName>([
+  SkeletalAnimationName.BowRecovery,
+  SkeletalAnimationName.MainHandSwingRecovery,
+  SkeletalAnimationName.OffHandSwingRecovery,
+  SkeletalAnimationName.TwoHandSwingRecovery,
+  SkeletalAnimationName.MainHandStabRecovery,
+  SkeletalAnimationName.OffHandStabRecovery,
+  SkeletalAnimationName.TwoHandStabRecovery,
+  SkeletalAnimationName.MainHandUnarmedRecovery,
+  SkeletalAnimationName.OffHandUnarmedRecovery,
+  SkeletalAnimationName.CastSpellRecovery,
+  SkeletalAnimationName.ThrowObjectRecovery,
+]);
+
+function isAttackPhaseAnimation(name: SkeletalAnimationName): boolean {
+  return ATTACK_PHASE_ANIMATIONS.has(name);
+}
+
+function isRecoveryPhaseAnimation(name: SkeletalAnimationName): boolean {
+  return RECOVERY_PHASE_ANIMATIONS.has(name);
 }

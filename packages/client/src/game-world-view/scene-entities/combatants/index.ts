@@ -20,6 +20,7 @@ import { ClientApplication } from "@/client-application";
 import { HighlightManager } from "./highlight-manager/index";
 import { CombatantSceneEntityEquipmentManager } from "./equipment-manager";
 import { TargetIndicatorBillboardManager } from "./target-indicators";
+import { SpineAimingManager } from "./spine-aiming-manager";
 
 export class CombatantSceneEntity extends SceneEntity {
   readonly childTransformNodes: Partial<
@@ -34,6 +35,7 @@ export class CombatantSceneEntity extends SceneEntity {
   readonly equipmentManager: CombatantSceneEntityEquipmentManager;
   readonly highlightManager: HighlightManager;
   readonly targetingIndicatorManager: TargetIndicatorBillboardManager;
+  readonly spineAimingManager: SpineAimingManager;
 
   public debugElement: HTMLDivElement | null = null;
   public modelDomPositionElement: HTMLDivElement | null = null;
@@ -83,6 +85,7 @@ export class CombatantSceneEntity extends SceneEntity {
       gameWorldView.itemSceneEntityFactory
     );
     this.highlightManager = new HighlightManager(this.scene, clientApplication, this);
+    this.spineAimingManager = new SpineAimingManager(this.rootMesh);
 
     this.rootTransformNode.name += this._combatant.entityProperties.name;
   }

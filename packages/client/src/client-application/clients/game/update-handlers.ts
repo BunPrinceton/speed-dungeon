@@ -832,6 +832,10 @@ export function createGameUpdateHandlers(
       alertsService.setAlert(`Pet name changed from ${pet.entityProperties.name} to ${newName}`);
       pet.entityProperties.name = newName;
     },
+    [GameStateUpdateType.Pong]: (data) => {
+      const rtt = Date.now() - data.timestamp;
+      clientApplication.uiStore.connectionStatus.pingMs = rtt;
+    },
   };
 }
 

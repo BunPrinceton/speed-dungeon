@@ -250,5 +250,9 @@ export function createLobbyUpdateHandlers(
 
       clientApplication.topologyManager.createGameClient(url, queryParams);
     },
+    [GameStateUpdateType.Pong]: (data) => {
+      const rtt = Date.now() - data.timestamp;
+      clientApplication.uiStore.connectionStatus.pingMs = rtt;
+    },
   };
 }

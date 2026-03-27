@@ -8,6 +8,7 @@ import { SpawnableEntityType } from "../../../spawnables/index.js";
 import { EntityMotionActionResolutionStep } from "./entity-motion.js";
 import { SceneEntityType } from "../../../scene-entities/index.js";
 import { COMBAT_ACTIONS } from "../../../combat/combat-actions/action-implementations/index.js";
+import { TargetingCalculator } from "../../../combat/targeting/targeting-calculator.js";
 
 export class CombatantMotionActionResolutionStep extends EntityMotionActionResolutionStep {
   constructor(context: ActionResolutionStepContext, step: ActionResolutionStepType) {
@@ -54,6 +55,20 @@ export class CombatantMotionActionResolutionStep extends EntityMotionActionResol
         actionUser,
         context.manager.sequentialActionManagerRegistry.animationLengths
       );
+    }
+
+    // Provide the primary target ID so the client can aim the spine bone at it
+    try {
+      const targetingCalculator = new TargetingCalculator(context.actionUserContext, null);
+      const primaryTarget = targetingCalculator.getPrimaryTargetCombatant(
+        context.actionUserContext.party,
+        context.tracker.actionExecutionIntent
+      );
+      if (!(primaryTarget instanceof Error)) {
+        update.aimAtTargetEntityId = primaryTarget.entityProperties.id;
+      }
+    } catch {
+      // targeting may not be applicable for this action
     }
 
     /**Here we create and set the internal reference to the associated game update command, as well as

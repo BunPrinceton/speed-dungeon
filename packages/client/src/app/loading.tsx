@@ -1,20 +1,19 @@
+"use client";
 import React from "react";
 import LoadingSpinner from "./components/atoms/LoadingSpinner";
-import { ArrayUtils } from "@speed-dungeon/common";
-import { useClientApplication } from "@/hooks/create-client-application-context";
+
+const loadingMessages = [
+  "Travelling to a new area",
+  "Descending deeper",
+  "Approaching destination",
+  "Refilling autoinjectors",
+  "Collating affixes",
+  "Researching loot tables",
+];
 
 export default function Loading() {
-  const loadingMessages = [
-    "Travelling to a new area",
-    "Descending deeper",
-    "Approaching destination",
-    "Refilling autoinjectors",
-    "Collating affixes",
-    "Researching loot tables",
-  ];
-  const { randomNumberGenerator } = useClientApplication();
-  let loadingMessage = ArrayUtils.chooseRandom(loadingMessages, randomNumberGenerator);
-  if (loadingMessage instanceof Error) loadingMessage = "Loading";
+  const loadingMessage =
+    loadingMessages[Math.floor(Math.random() * loadingMessages.length)] ?? "Loading";
   return (
     <main className="h-screen w-screen pt-10 flex flex-col items-center">
       <h1 className="mb-4">{loadingMessage}...</h1>

@@ -7,7 +7,7 @@ export class FloatingMessagesStore {
   private floatingMessages = new Map<EntityId, FloatingMessage[]>();
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getFloatingMessages(entityId: EntityId) {

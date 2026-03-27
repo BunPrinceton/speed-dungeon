@@ -11,11 +11,21 @@ interface Props {
   displayData: UserChannelDisplayData;
 }
 
+function getPingColor(pingMs: number): string {
+  if (pingMs < 80) return "text-green-600";
+  if (pingMs < 150) return "text-yellow-400";
+  return "text-red-400";
+}
+
 export const UserPlaque = observer(({ username, displayData }: Props) => {
-  const thisTabUsername = useClientApplication().session.usernameOption;
+  const clientApplication = useClientApplication();
+  const thisTabUsername = clientApplication.session.usernameOption;
+  const pingMs = clientApplication.uiStore.connectionStatus.pingMs;
   const bgStyle = displayData.authStatus === UserAuthStatus.Guest ? "bg-slate-700" : "bg-slate-950";
+  const isCurrentUser = thisTabUsername === username;
+
   let thisIsYouMarker = <span />;
-  if (thisTabUsername === username) {
+  if (isCurrentUser) {
     thisIsYouMarker = (
       <HoverableTooltipWrapper tooltipText="This is you">
         <div className="mr-2 h-4 w-4">
@@ -33,7 +43,12 @@ export const UserPlaque = observer(({ username, displayData }: Props) => {
       }}
     >
       {thisIsYouMarker}
-      <div className="overflow-hidden whitespace-nowrap text-ellipsis">{username}</div>
+      <div className="overflow-hidden whitespace-nowrap text-ellipsis flex-1">{username}</div>
+      {isCurrentUser && pingMs !== null && (
+        <div className={`mr-2 text-xs font-mono ${getPingColor(pingMs)}`}>
+          {pingMs}ms
+        </div>
+      )}
     </li>
   );
 });

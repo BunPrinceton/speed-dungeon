@@ -1,8 +1,9 @@
 import { useClientApplication } from "@/hooks/create-client-application-context";
+import { TooltipContent } from "@/client-application/ui/tooltips";
 import React, { ReactNode, useEffect, useRef } from "react";
 
 interface Props {
-  tooltipText?: ReactNode;
+  tooltipText?: string | TooltipContent;
   extraStyles?: string;
   offsetTop?: number;
   children: ReactNode;
@@ -21,7 +22,11 @@ export default function HoverableTooltipWrapper(props: Props) {
 
   function handleFocus() {
     if (props.tooltipText) {
-      tooltips.showTooltip(elementRef.current, props.tooltipText);
+      const content: TooltipContent =
+        typeof props.tooltipText === "string"
+          ? { type: "text", text: props.tooltipText }
+          : props.tooltipText;
+      tooltips.showTooltip(elementRef.current, content);
     }
   }
 

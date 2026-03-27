@@ -18,7 +18,6 @@ import {
   MAGICAL_ELEMENT_STRINGS,
   ResourceChange,
 } from "@speed-dungeon/common";
-import { ReactNode } from "react";
 import { ClientApplication } from "..";
 import {
   COMBAT_LOG_MESSAGE_STYLES_BY_MESSAGE_TYPE,
@@ -26,7 +25,6 @@ import {
   GameLogMessageStyle,
 } from "./game-log-messages";
 import { DialogElementName } from "../ui/dialogs";
-import { ItemLink } from "./item-link";
 
 export class EventLogGameMessageService {
   constructor(private clientApplication: ClientApplication) {}
@@ -35,8 +33,12 @@ export class EventLogGameMessageService {
     this.clientApplication.eventLogStore.postMessage(message);
   }
 
+  private dispatchText(text: string, style: GameLogMessageStyle) {
+    this.dispatch(new GameLogMessage({ type: "text", text }, style));
+  }
+
   postGameStarted() {
-    this.dispatch(new GameLogMessage("A new game has begun!", GameLogMessageStyle.Basic));
+    this.dispatchText("A new game has begun!", GameLogMessageStyle.Basic);
   }
 
   postActionUse(command: ActionUseGameLogMessageUpdateCommand) {
@@ -46,7 +48,7 @@ export class EventLogGameMessageService {
       if (!action.gameLogMessageProperties.getOnUseMessage) return;
 
       const message = action.gameLogMessageProperties.getOnUseMessage(actionUseMessageData);
-      this.dispatch(new GameLogMessage(message, GameLogMessageStyle.Basic));
+      this.dispatchText(message, GameLogMessageStyle.Basic);
     }
   }
 
@@ -65,59 +67,56 @@ export class EventLogGameMessageService {
       }
 
       if (message) {
-        this.dispatch(new GameLogMessage(message, GameLogMessageStyle.Basic));
+        this.dispatchText(message, GameLogMessageStyle.Basic);
       }
     }
   }
 
   postUserLeftGame(username: string) {
-    this.dispatch(new GameLogMessage(`${username} left the game`, GameLogMessageStyle.PartyWipe));
+    this.dispatchText(`${username} left the game`, GameLogMessageStyle.PartyWipe);
   }
 
   postGameMessage(message: GameMessage) {
     const style = COMBAT_LOG_MESSAGE_STYLES_BY_MESSAGE_TYPE[message.type];
-    this.dispatch(new GameLogMessage(message.message, style));
+    this.dispatchText(message.message, style);
   }
 
   postActionMissed(actionUserName: string, targetName: string) {
-    const style = GameLogMessageStyle.Basic;
-    const messageText = `${actionUserName} failed to hit ${targetName}`;
-    this.dispatch(new GameLogMessage(messageText, style));
+    this.dispatchText(
+      `${actionUserName} failed to hit ${targetName}`,
+      GameLogMessageStyle.Basic
+    );
   }
 
   postActionEvaded(actionUserName: string, targetName: string) {
-    const style = GameLogMessageStyle.Basic;
-    const messageText = `${targetName} evaded an attack from ${actionUserName}`;
-    this.dispatch(new GameLogMessage(messageText, style));
+    this.dispatchText(
+      `${targetName} evaded an attack from ${actionUserName}`,
+      GameLogMessageStyle.Basic
+    );
   }
 
   postActionParried(actionUserName: string, targetName: string) {
-    const style = GameLogMessageStyle.Basic;
-    const messageText = `${targetName} parried an attack from ${actionUserName}`;
-    this.dispatch(new GameLogMessage(messageText, style));
+    this.dispatchText(
+      `${targetName} parried an attack from ${actionUserName}`,
+      GameLogMessageStyle.Basic
+    );
   }
 
   postActionCountered(actionUserName: string, targetName: string) {
-    const style = GameLogMessageStyle.Basic;
-    const messageText = `${targetName} countered an attack from ${actionUserName}`;
-    this.dispatch(new GameLogMessage(messageText, style));
+    this.dispatchText(
+      `${targetName} countered an attack from ${actionUserName}`,
+      GameLogMessageStyle.Basic
+    );
   }
 
   postActionResisted(actionUserName: string, targetName: string) {
-    const style = GameLogMessageStyle.Basic;
-    const messageText = `${targetName} resisted.`;
-    this.dispatch(new GameLogMessage(messageText, style));
+    this.dispatchText(`${targetName} resisted.`, GameLogMessageStyle.Basic);
   }
 
   postItemLink(posterName: string, item: Item) {
     this.dispatch(
       new GameLogMessage(
-        (
-          <div>
-            {posterName} calls attention to{" "}
-            <ItemLink item={item} detailablesFocus={this.clientApplication.detailableEntityFocus} />
-          </div>
-        ),
+        { type: "itemLink", posterName, item },
         COMBAT_LOG_MESSAGE_STYLES_BY_MESSAGE_TYPE[GameMessageType.CraftingAction]
       )
     );
@@ -129,72 +128,56 @@ export class EventLogGameMessageService {
     craftingAction: CraftingAction,
     itemResult: Equipment
   ) {
-    // post combat log message about the crafted result with hoverable item inspection link
     const style = COMBAT_LOG_MESSAGE_STYLES_BY_MESSAGE_TYPE[GameMessageType.CraftingAction];
-    let craftingResultMessage: ReactNode = "";
-
     const item = Equipment.fromSerialized(itemResult);
 
-    const craftedItemLink = (
-      <ItemLink item={item} detailablesFocus={this.clientApplication.detailableEntityFocus} />
-    );
-
+    let itemAfter: Equipment | null = null;
     switch (craftingAction) {
       case CraftingAction.Repair:
         break;
       case CraftingAction.Reform:
       case CraftingAction.Shake:
-        craftingResultMessage = <div> resulting in {craftedItemLink}</div>;
-        break;
       case CraftingAction.Imbue:
       case CraftingAction.Augment:
       case CraftingAction.Tumble:
-        craftingResultMessage = <div> and created {craftedItemLink}</div>;
+        itemAfter = item;
+        break;
     }
 
     this.dispatch(
       new GameLogMessage(
-        (
-          <div>
-            {crafterName} {CRAFTING_ACTION_PAST_TENSE_STRINGS[craftingAction]}{" "}
-            <ItemLink
-              item={itemBeforeModification}
-              detailablesFocus={this.clientApplication.detailableEntityFocus}
-            />
-            {craftingResultMessage}
-          </div>
-        ),
+        {
+          type: "craftResult",
+          crafterName,
+          craftingAction,
+          itemBefore: itemBeforeModification,
+          itemAfter,
+        },
         style
       )
     );
   }
 
   postCombatantDeath(targetName: string) {
-    this.dispatch(
-      new GameLogMessage(`${targetName}'s hp was reduced to zero`, GameLogMessageStyle.Basic)
-    );
+    this.dispatchText(`${targetName}'s hp was reduced to zero`, GameLogMessageStyle.Basic);
   }
 
   postExperienceGained(gainerName: string, value: number) {
-    this.dispatch(
-      new GameLogMessage(
-        `${gainerName} gained ${value} experience points`,
-        GameLogMessageStyle.PartyProgress
-      )
+    this.dispatchText(
+      `${gainerName} gained ${value} experience points`,
+      GameLogMessageStyle.PartyProgress
     );
   }
 
   postLevelup(levelerName: string, newLevel: number) {
-    this.dispatch(
-      new GameLogMessage(
-        `${levelerName} reached level ${newLevel}!`,
-        GameLogMessageStyle.PartyProgress
-      )
+    this.dispatchText(
+      `${levelerName} reached level ${newLevel}!`,
+      GameLogMessageStyle.PartyProgress
     );
   }
 
   postWipeMessage() {
-    this.dispatch(new GameLogMessage("Your party was defeated", GameLogMessageStyle.PartyWipe));
+    this.dispatchText("Your party was defeated", GameLogMessageStyle.PartyWipe);
   }
 
   postResourceChange(
@@ -262,7 +245,7 @@ export class EventLogGameMessageService {
     if (resourceChange.isCrit) messageText = "Critical! " + messageText;
     if (wasBlocked) messageText = "Shield block: " + messageText;
 
-    this.dispatch(new GameLogMessage(messageText, style));
+    this.dispatchText(messageText, style);
   }
 }
 

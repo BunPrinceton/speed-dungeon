@@ -22,3 +22,10 @@ cypress.env.json
 # mac computers add this to all their folders
 **/.DS_Store
 
+# Electron build output
+**/dist-electron
+**/electron-dist
+
+# Audio source packs (raw downloads, keep categorized only)
+packages/client/public/audio/sources
+

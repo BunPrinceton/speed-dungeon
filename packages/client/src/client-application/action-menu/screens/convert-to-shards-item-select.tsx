@@ -12,7 +12,7 @@ import { ConfirmConvertToShardsActionMenuScreen } from "./convert-to-shards-conf
 export class ConvertToShardItemSelectionActionMenuScreen extends ActionMenuScreen {
   constructor(clientApplication: ClientApplication) {
     super(clientApplication, ActionMenuScreenType.ShardItemSelection);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

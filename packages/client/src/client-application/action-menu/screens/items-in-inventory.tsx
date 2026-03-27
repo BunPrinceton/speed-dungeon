@@ -12,7 +12,7 @@ import { HotkeyButtonTypes } from "@/client-application/ui/keybind-config";
 export class InventoryItemsActionMenuScreen extends ActionMenuScreen {
   constructor(clientApplication: ClientApplication) {
     super(clientApplication, ActionMenuScreenType.InventoryItems);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

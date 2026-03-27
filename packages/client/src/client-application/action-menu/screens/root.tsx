@@ -14,7 +14,7 @@ import { CombatActionButton } from "@/app/game/ActionMenu/menu-state/common-butt
 export class RootActionMenuScreen extends ActionMenuScreen {
   constructor(clientApplication: ClientApplication) {
     super(clientApplication, ActionMenuScreenType.Root);
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   getTopSection() {

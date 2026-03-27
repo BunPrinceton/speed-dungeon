@@ -1,5 +1,5 @@
 import { ClientIntentMap, ClientIntentType } from "../../packets/client-intents.js";
-import { GameStateUpdate } from "../../packets/game-state-updates.js";
+import { GameStateUpdate, GameStateUpdateType } from "../../packets/game-state-updates.js";
 import { UserSession } from "../sessions/user-session.js";
 import { MessageDispatchOutbox } from "../update-delivery/outbox.js";
 import { LobbyServer } from "./index.js";
@@ -52,5 +52,15 @@ export function createLobbyClientIntentHandlers(
       lobbyServer.savedCharactersController.createSavedCharacterHandler(user, data),
     [ClientIntentType.DeleteSavedCharacter]: (data, user) =>
       lobbyServer.savedCharactersController.deleteSavedCharacterHandler(user, data),
+
+    // CONNECTION
+    [ClientIntentType.Ping]: (data, user) => {
+      const outbox = new MessageDispatchOutbox<GameStateUpdate>(lobbyServer.updateDispatchFactory);
+      outbox.pushToConnection(user.connectionId, {
+        type: GameStateUpdateType.Pong,
+        data: { timestamp: data.timestamp },
+      });
+      return outbox;
+    },
   };
 }

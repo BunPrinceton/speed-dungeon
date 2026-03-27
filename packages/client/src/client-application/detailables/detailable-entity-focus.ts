@@ -27,7 +27,7 @@ export class DetailableEntityFocus {
   private combatantFocus: CombatantFocus | null = null;
 
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {}, { autoBind: true });
   }
 
   initialize(combatantFocus: CombatantFocus) {

@@ -37,7 +37,7 @@ export class EquippedItemsActionMenuScreen extends ActionMenuScreen {
       actionMenu.pushStack(new ConsideringItemActionMenuScreen(clientApplication, item));
     }
 
-    const newNumberedButtons = ActionMenuScreen.getItemButtonsFromList(
+    const newNumberedButtons = this.getItemButtonsFromList(
       itemsInInventory,
       itemButtonClickHandler,
       () => false

@@ -42,7 +42,8 @@ export const ActionDetailsTitleBar = observer((props: Props) => {
   const selectedLevelOption = actionStateAndSelectedLevel?.selectedLevelOption;
   const action = COMBAT_ACTIONS[actionName];
 
-  const { gameClientRef, combatantFocus } = useClientApplication();
+  const { gameClientRef, combatantFocus, uiStore } = useClientApplication();
+  const { keybinds } = uiStore;
   const { combatant, party } = combatantFocus.requireFocusedCharacterContext();
 
   const inBattle = party.combatantManager.monstersArePresent();
@@ -73,7 +74,7 @@ export const ActionDetailsTitleBar = observer((props: Props) => {
                     return (
                       <li key={actionName + rank} className="mr-1 last:mr-0">
                         <HotkeyButton
-                          hotkeys={[`Digit${rank.toString()}`, `Numpad${rank.toString()}`]}
+                          hotkeys={keybinds.getMenuItemBinds(rank)}
                           disabled={selectedLevelOption === null || !!unmet.length}
                           onClick={() =>
                             handleSelectActionLevel(

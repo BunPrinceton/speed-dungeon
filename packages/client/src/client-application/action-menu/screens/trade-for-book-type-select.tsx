@@ -55,7 +55,7 @@ export class SelectBookToTradeForActionMenuScreen extends ActionMenuScreen {
           item={book}
           text={book.entityProperties.name}
           hotkeyLabel={`${buttonNumber}`}
-          hotkeys={[`Digit${buttonNumber}`]}
+          hotkeys={this.clientApplication.uiStore.keybinds.getMenuItemBinds(buttonNumber)}
           clickHandler={() => {
             this.clientApplication.actionMenu.pushStack(
               new SelectItemToTradeForBookActionMenuScreen(

@@ -77,7 +77,7 @@ export class OperatingVendingMachineActionMenuScreen extends ActionMenuScreen {
       return (
         <ActionMenuNumberedButton
           key={blueprint.title}
-          hotkeys={[`Digit${i + 1}`]}
+          hotkeys={this.clientApplication.uiStore.keybinds.getMenuItemBinds(i + 1)}
           hotkeyLabel={(i + 1).toString()}
           clickHandler={blueprint.clickHandler}
           disabled={disabled}

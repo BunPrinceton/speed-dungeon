@@ -20,6 +20,7 @@ import RefreshIcon from "../../../../public/img/menu-icons/refresh.svg";
 import { observer } from "mobx-react-lite";
 import { useClientApplication } from "@/hooks/create-client-application-context";
 import { DialogElementName } from "@/client-application/ui/dialogs";
+import { HotkeyButtonTypes } from "@/client-application/ui/keybind-config";
 
 export const GamesSection = observer(() => {
   const [gameListRefreshedAt, setGameListRefreshedAt] = useState("...");
@@ -28,7 +29,7 @@ export const GamesSection = observer(() => {
   const { gameList } = lobbyContext;
   const gameListRef = useRef(null);
   const gameListIsOverflowing = useElementIsOverflowing(gameListRef.current);
-  const { dialogs } = clientApplication.uiStore;
+  const { dialogs, keybinds } = clientApplication.uiStore;
   const showGameCreationForm = dialogs.isOpen(DialogElementName.GameCreation);
   const gameFormHolderRef = useRef<HTMLDivElement>(null);
 
@@ -87,7 +88,7 @@ export const GamesSection = observer(() => {
         >
           <div>{gameList.length ? "Current games" : "No current games..."}</div>
           <HotkeyButton
-            hotkeys={["KeyR"]}
+            hotkeys={keybinds.getKeybind(HotkeyButtonTypes.RefreshGameList)}
             className="border-l border-slate-400 p-2 h-full"
             onClick={refreshGameList}
           >
@@ -128,7 +129,7 @@ export const GamesSection = observer(() => {
           className={`bg-slate-700 w-full h-10 border border-slate-400 flex justify-between items-center pointer-events-auto`}
         >
           <HotkeyButton
-            hotkeys={["KeyA"]}
+            hotkeys={keybinds.getKeybind(HotkeyButtonTypes.ToggleHostGameForm)}
             className="w-full h-full disabled:opacity-10"
             disabled={!lobbyClientRef.isInitialized}
             onClick={() => {

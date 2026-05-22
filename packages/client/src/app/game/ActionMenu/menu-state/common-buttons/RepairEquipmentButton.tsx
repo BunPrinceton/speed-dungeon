@@ -19,7 +19,8 @@ interface Props {
 export const RepairEquipmentButton = observer((props: Props) => {
   const { equipment, listIndex } = props;
   const clientApplication = useClientApplication();
-  const { gameClientRef } = clientApplication;
+  const { gameClientRef, uiStore } = clientApplication;
+  const { keybinds } = uiStore;
   const focusedCharacter = clientApplication.combatantFocus.requireFocusedCharacter();
 
   const price = getCraftingActionPrice(CraftingAction.Repair, equipment);
@@ -44,7 +45,7 @@ export const RepairEquipmentButton = observer((props: Props) => {
       item={equipment}
       text={equipment.entityProperties.name}
       hotkeyLabel={(listIndex + 1).toString()}
-      hotkeys={[`Digit${listIndex + 1}`]}
+      hotkeys={keybinds.getMenuItemBinds(listIndex + 1)}
       clickHandler={clickHandler}
       disabled={false}
     >

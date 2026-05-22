@@ -2,24 +2,24 @@
 import { SPACING_REM_LARGE, TOP_BAR_HEIGHT_REM, WEBSITE_NAME } from "@/client-consts";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Settings } from "@/app/settings";
 import { APP_VERSION_NUMBER } from "@speed-dungeon/common";
 import { UserMenuContainer } from "./user-menu";
 import { ConnectionSelector } from "./connection-selector";
+import { SettingsButton } from "@/app/settings/SettingsButton";
 
 export default function TopBar() {
   const pathName = usePathname();
 
   return (
     <>
-      <Settings />
       <section
         className={`bg-slate-700 w-full border-b border-b-slate-400 pt-[0.625rem] pb-[0.625rem]
-        pointer-events-auto flex justify-between`}
+        pointer-events-auto flex justify-between relative`}
         style={{
           height: `${TOP_BAR_HEIGHT_REM}rem`,
           paddingLeft: `${SPACING_REM_LARGE}rem`,
           paddingRight: `${SPACING_REM_LARGE}rem`,
+          zIndex: 10,
         }}
       >
         <div className="h-full flex items-center">
@@ -52,6 +52,9 @@ export default function TopBar() {
         <div className="flex">
           <div className="mr-2 flex items-center">
             <ConnectionSelector />
+          </div>
+          <div className="mr-2 flex items-center">
+            <SettingsButton />
           </div>
           <UserMenuContainer />
         </div>

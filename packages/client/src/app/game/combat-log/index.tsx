@@ -12,18 +12,25 @@ import {
 import { ItemLink } from "@/client-application/event-log/item-link";
 import { DetailableEntityFocus } from "@/client-application/detailables/detailable-entity-focus";
 import { CRAFTING_ACTION_PAST_TENSE_STRINGS, CraftingAction } from "@speed-dungeon/common";
+import {
+  HotkeyButtonTypes,
+  letterFromKeyCode,
+} from "@/client-application/ui/keybind-config";
 
 export const GameLog = observer(() => {
   const [expanded, setExpanded] = useState(false);
   const clientApplication = useClientApplication();
-  const { eventLogStore, detailableEntityFocus } = clientApplication;
+  const { eventLogStore, detailableEntityFocus, uiStore } = clientApplication;
+  const { keybinds } = uiStore;
   const gameLogMessages = eventLogStore.getMessages();
+  const toggleLogBinds = keybinds.getKeybind(HotkeyButtonTypes.ToggleCombatLog);
+  const toggleLogLabel = toggleLogBinds.map(letterFromKeyCode).join(", ");
 
   const expandedStyle = expanded
     ? "absolute bg-slate-700 p-2 top-0 right-0 h-screen w-screen"
     : "h-full";
 
-  const expandButtonText = expanded ? "Restore (L)" : "Maximize (L)";
+  const expandButtonText = expanded ? `Restore (${toggleLogLabel})` : `Maximize (${toggleLogLabel})`;
 
   return (
     <div className={`flex flex-col pointer-events-auto ${expandedStyle}`}>
@@ -33,7 +40,7 @@ export const GameLog = observer(() => {
           onClick={() => {
             setExpanded(!expanded);
           }}
-          hotkeys={["KeyL"]}
+          hotkeys={toggleLogBinds}
         >
           {expandButtonText}
         </HotkeyButton>

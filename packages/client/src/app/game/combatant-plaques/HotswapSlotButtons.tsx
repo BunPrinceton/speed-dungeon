@@ -9,7 +9,10 @@ import HoverableTooltipWrapper from "@/app/components/atoms/HoverableTooltipWrap
 import { IconName, SVG_ICONS } from "@/app/icons";
 import { useClientApplication } from "@/hooks/create-client-application-context";
 import { observer } from "mobx-react-lite";
-import { HOTKEYS } from "@/client-application/ui/keybind-config";
+import {
+  HotkeyButtonTypes,
+  eventMatchesKeybind,
+} from "@/client-application/ui/keybind-config";
 import { ClientSingleton } from "@/client-application/clients/singleton";
 import { GameClient } from "@/client-application/clients/game";
 
@@ -69,8 +72,12 @@ export const HotswapSlotButtons = observer(
 
       listenerRef.current = (e: KeyboardEvent) => {
         if (uiStore.inputs.getHotkeysDisabled()) return;
-        if (e.code === HOTKEYS.BOTTOM_LEFT) selectNextOrPrevious(NextOrPrevious.Previous);
-        if (e.code === HOTKEYS.BOTTOM_RIGHT) selectNextOrPrevious(NextOrPrevious.Next);
+        const prevBinds = uiStore.keybinds.getKeybind(HotkeyButtonTypes.SelectPreviousWeaponSlot);
+        const nextBinds = uiStore.keybinds.getKeybind(HotkeyButtonTypes.SelectNextWeaponSlot);
+        if (prevBinds.some((b) => eventMatchesKeybind(e, b)))
+          selectNextOrPrevious(NextOrPrevious.Previous);
+        if (nextBinds.some((b) => eventMatchesKeybind(e, b)))
+          selectNextOrPrevious(NextOrPrevious.Next);
       };
 
       window.addEventListener("keydown", listenerRef.current);

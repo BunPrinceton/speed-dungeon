@@ -49,6 +49,14 @@ export const TopInfoBar = observer(() => {
       )}
       <div className="absolute right-0 h-full w-fit border-l border-slate-400 flex items-center justify-center">
         <HotkeyButton
+          className="h-full bg-slate-700 hover:bg-slate-950 pr-4 pl-4 border-r border-slate-400"
+          onClick={() => {
+            dialogs.toggle(DialogElementName.AppSettings);
+          }}
+        >
+          SETTINGS
+        </HotkeyButton>
+        <HotkeyButton
           className="h-full w-full bg-slate-700 hover:bg-slate-950 pr-4 pl-4 "
           onClick={() => {
             dialogs.toggle(DialogElementName.LeaveGame);

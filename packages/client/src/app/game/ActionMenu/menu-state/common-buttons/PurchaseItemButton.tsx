@@ -24,7 +24,8 @@ export const PurchaseItemButton = observer((props: Props) => {
   }
 
   const clientApplication = useClientApplication();
-  const { gameContext, combatantFocus, gameClientRef } = clientApplication;
+  const { gameContext, combatantFocus, gameClientRef, uiStore } = clientApplication;
+  const { keybinds } = uiStore;
   const party = gameContext.requireParty();
   const focusedCharacter = combatantFocus.requireFocusedCharacter();
 
@@ -43,7 +44,7 @@ export const PurchaseItemButton = observer((props: Props) => {
       item={item}
       text={CONSUMABLE_TYPE_STRINGS[consumableType]}
       hotkeyLabel={(listIndex + 1).toString()}
-      hotkeys={[`Digit${listIndex + 1}`]}
+      hotkeys={keybinds.getMenuItemBinds(listIndex + 1)}
       clickHandler={() => {
         gameClientRef.get().dispatchIntent({
           type: ClientIntentType.PurchaseItem,

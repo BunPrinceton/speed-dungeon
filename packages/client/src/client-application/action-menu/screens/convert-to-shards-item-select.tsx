@@ -44,7 +44,7 @@ export class ConvertToShardItemSelectionActionMenuScreen extends ActionMenuScree
       );
     }
 
-    return ActionMenuScreen.getItemButtonsFromList(
+    return this.getItemButtonsFromList(
       allOwnedItems,
       clickHandler,
       () => false,

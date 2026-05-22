@@ -13,6 +13,7 @@ import { ClientApplication } from "@/client-application";
 import { ClientApplicationContext } from "@/hooks/create-client-application-context";
 import { MainAppWindow } from "./MainAppWindow";
 import { createClientApplication } from "./create-client-application";
+import { Settings } from "./settings";
 
 export default observer(() => {
   const clientApplicationRef = useRef<ClientApplication | null>(null);
@@ -47,6 +48,7 @@ export default observer(() => {
       <SkyColorProvider>
         <MainAppWindow />
       </SkyColorProvider>
+      <Settings />
     </ClientApplicationContext.Provider>
   );
 });

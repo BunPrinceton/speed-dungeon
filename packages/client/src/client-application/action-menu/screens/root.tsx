@@ -50,7 +50,7 @@ export class RootActionMenuScreen extends ActionMenuScreen {
         return (
           <CombatActionButton
             key={actionName}
-            hotkeys={[`Digit${buttonNumber}`]}
+            hotkeys={this.clientApplication.uiStore.keybinds.getMenuItemBinds(buttonNumber)}
             hotkeyLabel={buttonNumber.toString()}
             user={focusedCharacter}
             actionName={actionName}

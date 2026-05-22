@@ -25,7 +25,8 @@ interface Props {
 export const CraftActionButton = observer((props: Props) => {
   const { equipment, craftingAction, listIndex } = props;
   const clientApplication = useClientApplication();
-  const { gameClientRef, gameContext, actionMenu, combatantFocus } = clientApplication;
+  const { gameClientRef, gameContext, actionMenu, combatantFocus, uiStore } = clientApplication;
+  const { keybinds } = uiStore;
 
   const focusedCharacterResult = combatantFocus.requireFocusedCharacter();
   const party = gameContext.requireParty();
@@ -57,7 +58,7 @@ export const CraftActionButton = observer((props: Props) => {
   return (
     <ActionMenuNumberedButton
       disabled={shouldBeDisabled}
-      hotkeys={[`Digit${buttonNumber}`]}
+      hotkeys={keybinds.getMenuItemBinds(buttonNumber)}
       hotkeyLabel={buttonNumber.toString()}
       clickHandler={() => {
         actionMenu.setCharacterIsCrafting(focusedCharacterResult.getEntityId());

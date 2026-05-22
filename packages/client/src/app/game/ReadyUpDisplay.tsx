@@ -9,7 +9,10 @@ import { HotkeyButton } from "../components/atoms/HotkeyButton";
 import { observer } from "mobx-react-lite";
 import { useClientApplication } from "@/hooks/create-client-application-context";
 import { ActionMenuScreenType } from "@/client-application/action-menu/screen-types";
-import { HOTKEYS, letterFromKeyCode } from "@/client-application/ui/keybind-config";
+import {
+  HotkeyButtonTypes,
+  letterFromKeyCode,
+} from "@/client-application/ui/keybind-config";
 
 interface Props {
   party: AdventuringParty;
@@ -17,8 +20,9 @@ interface Props {
 
 export const ReadyUpDisplay = observer(({ party }: Props) => {
   const clientApplication = useClientApplication();
-  const { session, combatantFocus, actionMenu, gameClientRef, detailableEntityFocus } =
+  const { session, combatantFocus, actionMenu, gameClientRef, detailableEntityFocus, uiStore } =
     clientApplication;
+  const { keybinds } = uiStore;
   const username = session.requireUsername();
   const focusedCharacterId = combatantFocus.requireFocusedCharacterId();
 
@@ -78,9 +82,14 @@ export const ReadyUpDisplay = observer(({ party }: Props) => {
     hoveredEntity ||
     actionMenu.shouldShowCharacterSheet() ||
     currentMenu.type !== ActionMenuScreenType.Root;
-  const descendHotkey = HOTKEYS.SIDE_2;
-  const exploreHotkey = HOTKEYS.SIDE_1;
-  const operateVendingMachineHotkey = HOTKEYS.SIDE_2;
+  const exploreBinds = keybinds.getKeybind(HotkeyButtonTypes.ExploreNextRoom);
+  const operateBinds = keybinds.getKeybind(HotkeyButtonTypes.OperateVendingMachine);
+  const voteStayBinds = keybinds.getKeybind(HotkeyButtonTypes.VoteToStayOnFloor);
+  const voteDescendBinds = keybinds.getKeybind(HotkeyButtonTypes.VoteToDescendFloor);
+  const exploreHotkeyLabel = exploreBinds.map(letterFromKeyCode).join(", ");
+  const operateHotkeyLabel = operateBinds.map(letterFromKeyCode).join(", ");
+  const voteStayLabel = voteStayBinds.map(letterFromKeyCode).join(", ");
+  const voteDescendLabel = voteDescendBinds.map(letterFromKeyCode).join(", ");
 
   const allowedToDescend = !inStaircaseRoom || party.combatantManager.monstersArePresent();
 
@@ -99,16 +108,16 @@ export const ReadyUpDisplay = observer(({ party }: Props) => {
           <div className="flex justify-between w-full">
             <HotkeyButton
               className={`h-10 pr-2 pl-2 ${!isVendingMachine ? "bg-slate-800 w-full" : "w-1/2 mr-1 "} border border-white text-center hover:bg-slate-950`}
-              hotkeys={["KeyG"]}
+              hotkeys={exploreBinds}
               disabled={actionMenu.operatingVendingMachine()}
               onClick={handleExploreClick}
             >
-              Explore next room (G)
+              Explore next room ({exploreHotkeyLabel})
             </HotkeyButton>
             {party.currentRoom.roomType === DungeonRoomType.VendingMachine && (
               <HotkeyButton
                 className={`h-10 pr-2 pl-2 bg-slate-800 ml-1 w-1/2 border border-white text-center hover:bg-slate-950 disabled:opacity-50`}
-                hotkeys={["KeyT"]}
+                hotkeys={operateBinds}
                 disabled={
                   !party.combatantManager.playerOwnsCharacter(username, focusedCharacterId) ||
                   (currentMenu.type !== ActionMenuScreenType.Root &&
@@ -124,7 +133,7 @@ export const ReadyUpDisplay = observer(({ party }: Props) => {
                   }
                 }}
               >
-                Operate machine ({letterFromKeyCode(operateVendingMachineHotkey)})
+                Operate machine ({operateHotkeyLabel})
               </HotkeyButton>
             )}
           </div>
@@ -136,17 +145,17 @@ export const ReadyUpDisplay = observer(({ party }: Props) => {
           <div className="flex justify-between">
             <HotkeyButton
               className="h-10 pr-2 pl-2 border border-slate-400 w-1/2 text-center hover:bg-slate-950 mr-1"
-              hotkeys={[exploreHotkey]}
+              hotkeys={voteStayBinds}
               onClick={handleExploreClick}
             >
-              Vote to stay ({letterFromKeyCode(exploreHotkey)})
+              Vote to stay ({voteStayLabel})
             </HotkeyButton>
             <HotkeyButton
               className="h-10 pr-2 pl-2 border border-slate-400 w-1/2 text-center hover:bg-slate-950 ml-1"
-              hotkeys={[descendHotkey]}
+              hotkeys={voteDescendBinds}
               onClick={handleDescendClick}
             >
-              Vote to descend ({letterFromKeyCode(descendHotkey)})
+              Vote to descend ({voteDescendLabel})
             </HotkeyButton>
           </div>
         </div>

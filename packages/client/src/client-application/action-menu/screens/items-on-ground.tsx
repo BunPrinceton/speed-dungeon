@@ -70,7 +70,7 @@ export class ItemsOnGroundActionMenuScreen extends ActionMenuScreen {
         includePets: true,
       });
 
-    const newNumberedButtons = ActionMenuScreen.getItemButtonsFromList(
+    const newNumberedButtons = this.getItemButtonsFromList(
       itemsOnGround,
       (item) => {
         this.clientApplication.detailableEntityFocus.detailables.clear();

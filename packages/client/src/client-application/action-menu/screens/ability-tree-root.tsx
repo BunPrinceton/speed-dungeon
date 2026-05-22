@@ -39,7 +39,7 @@ export class AbilityTreeActionMenuScreen extends ActionMenuScreen {
         return (
           <ActionMenuNumberedButton
             key={number}
-            hotkeys={[`Digit${number}`]}
+            hotkeys={this.clientApplication.uiStore.keybinds.getMenuItemBinds(number)}
             hotkeyLabel={number.toString()}
             extraStyles={""}
             clickHandler={() => {

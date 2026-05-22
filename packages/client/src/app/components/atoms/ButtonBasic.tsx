@@ -1,5 +1,6 @@
 import { FocusEventHandler, MouseEventHandler, useEffect, useRef } from "react";
 import { HotkeyButton } from "./HotkeyButton";
+import { eventMatchesKeybind } from "@/client-application/ui/keybind-config";
 
 interface Props {
   extraStyles?: string;
@@ -21,7 +22,7 @@ export default function ButtonBasic(props: Props) {
   useEffect(() => {
     if (props.hotkey !== undefined) {
       keypressListenerRef.current = (e: KeyboardEvent) => {
-        if (e.code === props.hotkey) {
+        if (eventMatchesKeybind(e, props.hotkey!)) {
           // @ts-ignore
           onClick(new MouseEvent("mouseup"));
         }

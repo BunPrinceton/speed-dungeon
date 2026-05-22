@@ -39,6 +39,6 @@ export class CraftingItemSelectionActionMenuScreen extends ActionMenuScreen {
       actionMenu.pushStack(new CraftingItemActionMenuScreen(clientApplication, item));
     }
 
-    return ActionMenuScreen.getItemButtonsFromList(ownedEquipment, clickHandler, () => false);
+    return this.getItemButtonsFromList(ownedEquipment, clickHandler, () => false);
   }
 }

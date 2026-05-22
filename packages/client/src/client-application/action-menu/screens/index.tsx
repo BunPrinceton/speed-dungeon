@@ -92,12 +92,13 @@ export abstract class ActionMenuScreen {
     this.pageIndexInternal = 0;
   }
 
-  static getItemButtonsFromList(
+  getItemButtonsFromList(
     items: Item[],
     clickHandler: (item: Item) => void,
     itemDisabledFunction: (item: Item) => boolean,
     customChildrenGetter?: (item: Item) => ReactNode
   ) {
+    const { keybinds } = this.clientApplication.uiStore;
     const stackedItems = ItemUtils.sortIntoStacks(items);
 
     const { equipmentAndShardStacks, consumablesByTypeAndLevel } = stackedItems;
@@ -136,7 +137,7 @@ export abstract class ActionMenuScreen {
           text={buttonText}
           disabled={itemDisabledFunction(item)}
           hotkeyLabel={buttonNumber.toString()}
-          hotkeys={[`Digit${buttonNumber}`]}
+          hotkeys={keybinds.getMenuItemBinds(buttonNumber)}
           clickHandler={clickHandler}
         >
           {customChildrenGetter?.(item)}

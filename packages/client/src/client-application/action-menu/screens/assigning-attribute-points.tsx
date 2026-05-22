@@ -47,7 +47,7 @@ export class AssigningAttributePointsActionMenuScreen extends ActionMenuScreen {
       return (
         <ActionMenuNumberedButton
           key={attribute}
-          hotkeys={[`Digit${buttonNumber}`]}
+          hotkeys={this.clientApplication.uiStore.keybinds.getMenuItemBinds(buttonNumber)}
           hotkeyLabel={buttonNumber.toString()}
           disabled={shouldBeDisabled}
           clickHandler={() => {

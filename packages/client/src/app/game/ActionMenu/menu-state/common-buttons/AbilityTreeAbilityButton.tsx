@@ -23,7 +23,8 @@ export default function AbilityTreeAbilityButton(props: Props) {
   }
 
   const clientApplication = useClientApplication();
-  const { detailableEntityFocus, actionMenu } = clientApplication;
+  const { detailableEntityFocus, actionMenu, uiStore } = clientApplication;
+  const { keybinds } = uiStore;
 
   function clickHandler() {
     if (abilityOption === undefined) {
@@ -61,7 +62,7 @@ export default function AbilityTreeAbilityButton(props: Props) {
 
   return (
     <ActionMenuNumberedButton
-      hotkeys={[`Digit${displayIndex}`]}
+      hotkeys={keybinds.getMenuItemBinds(displayIndex)}
       hotkeyLabel={displayIndex.toString()}
       focusHandler={focusHandler}
       blurHandler={blurHandler}

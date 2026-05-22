@@ -16,6 +16,7 @@ import { observer } from "mobx-react-lite";
 import { CHARACTER_SLOT_SPACING } from "@/client-consts";
 import { useClientApplication } from "@/hooks/create-client-application-context";
 import { DialogElementName } from "@/client-application/ui/dialogs";
+import { HotkeyButtonTypes, letterFromKeyCode } from "@/client-application/ui/keybind-config";
 
 export const CHARACTER_MANAGER_HOTKEY = "S";
 
@@ -25,7 +26,9 @@ export const SavedCharacterManager = observer(() => {
   const { lobbyContext, uiStore, sequentialEventProcessor } = clientApplication;
   const savedCharacters = lobbyContext.savedCharacters.slots;
   const selectedCharacterOption = savedCharacters[currentSlot];
-  const { dialogs } = uiStore;
+  const { dialogs, keybinds } = uiStore;
+  const toggleManagerBinds = keybinds.getKeybind(HotkeyButtonTypes.ToggleSavedCharacterManager);
+  const toggleManagerLabel = toggleManagerBinds.map(letterFromKeyCode).join(", ") || CHARACTER_MANAGER_HOTKEY;
   const showGameCreationForm = dialogs.isOpen(DialogElementName.GameCreation);
   const showCharacterManager = dialogs.isOpen(DialogElementName.SavedCharacterManager);
 
@@ -82,11 +85,11 @@ export const SavedCharacterManager = observer(() => {
         <div className="absolute bottom-40">
           <HoverableTooltipWrapper
             offsetTop={8}
-            tooltipText={`Create or delete characters for the 'Progression' game mode (${CHARACTER_MANAGER_HOTKEY})`}
+            tooltipText={`Create or delete characters for the 'Progression' game mode (${toggleManagerLabel})`}
           >
             <HotkeyButton
               className="h-10 pr-2 pl-2 flex items-center border border-slate-400 bg-slate-700 pointer-events-auto"
-              hotkeys={[`Key${CHARACTER_MANAGER_HOTKEY}`]}
+              hotkeys={toggleManagerBinds}
               onClick={() => {
                 dialogs.open(DialogElementName.SavedCharacterManager);
               }}
@@ -101,7 +104,7 @@ export const SavedCharacterManager = observer(() => {
           <div className="p-4 w-full flex flex-col justify-center items-center bg-slate-700 border-slate-400 border pointer-events-auto">
             <HotkeyButton
               className="h-10 w-10 p-2 border-b border-l absolute top-0 right-0 border-slate-400"
-              hotkeys={["Escape", `Key${CHARACTER_MANAGER_HOTKEY}`]}
+              hotkeys={["Escape", ...toggleManagerBinds]}
               onClick={() => dialogs.close(DialogElementName.SavedCharacterManager)}
             >
               <XShape className="h-full w-full fill-slate-400" />

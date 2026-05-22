@@ -1,4 +1,5 @@
 import { useClientApplication } from "@/hooks/create-client-application-context";
+import { eventMatchesKeybind } from "@/client-application/ui/keybind-config";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { FocusEventHandler, MouseEventHandler, useEffect, useRef } from "react";
@@ -33,7 +34,7 @@ export const HotkeyButton = observer((props: Props) => {
     if (props.hotkeys !== undefined) {
       keydownListenerRef.current = (e: KeyboardEvent) => {
         for (const hotkey of props.hotkeys!) {
-          if (e.code === hotkey && !disabled && !props.ariaDisabled) {
+          if (eventMatchesKeybind(e, hotkey) && !disabled && !props.ariaDisabled) {
             //@ts-ignore
             props.onClick(new MouseEvent("mouseup"));
           }
